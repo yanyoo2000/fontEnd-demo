@@ -1,0 +1,20 @@
+<button id="font">开始</button>
+
+<script>
+    document.querySelector('#font').addEventListener('click', () => {
+        logFontData()
+    })
+
+    async function logFontData() {
+        try {
+            const availableFonts = await window.queryLocalFonts();
+            for (const fontData of availableFonts) {
+                const sfnt = await fontData.blob()
+
+                console.log(sfnt);
+            }
+        } catch (err) {
+            console.error(err.name, err.message);
+        }
+    }
+</script>

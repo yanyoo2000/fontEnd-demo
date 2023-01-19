@@ -1,0 +1,32 @@
+<head>
+    <style type="text/css">
+        /* @font-face {
+            font-family: "myFont";
+            src: url("https://mdn.github.io/css-examples/web-fonts/VeraSeBd.ttf");
+        } */
+
+        #htmlTest {
+            display: flex;
+            font-size: 30px;
+            font-family: 宋体, AdditionalSymbol;
+        }
+    </style>
+</head>
+<canvas id="canvas"></canvas>
+<div id="htmlTest">
+    <div id="text1" style="margin-right: 80px;"></div>
+    <div id="text2"></div>
+</div>
+
+
+<script>
+    var context = document.querySelector('#canvas').getContext('2d');
+    context.font = '30px 宋体, AdditionalSymbol';
+    let unicode = "\\u0278"
+    let text1 = eval('"' + unicode + '"')
+    let text2 = '测试字体'
+    context.fillText(text1, 10, 50);
+    document.querySelector('#text1').innerHTML = text1
+    context.fillText(text2, 100, 50)
+    document.querySelector('#text2').innerHTML = text2
+</script>

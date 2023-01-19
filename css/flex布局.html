@@ -1,0 +1,53 @@
+<div class="parent">
+    <div class="table">
+        <div class="container">
+            <ul>
+                <li>111111</li>
+            </ul>
+        </div>
+        <div class="page"></div>
+    </div>
+    <div class="detail"></div>
+</div>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .parent {
+        width: 500px;
+        height: 500px;
+        display: flex;
+    }
+
+    .table {
+        flex: 1;
+        background-color: red;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        flex: 1;
+        width: 300px;
+        background-color: green;
+        overflow: auto;
+    }
+
+    ul {
+        min-width: 400px;
+    }
+
+    .page {
+        height: 50px;
+        background-color: blue;
+    }
+
+    .detail {
+        width: 200px;
+        background-color: yellow;
+    }
+</style>
