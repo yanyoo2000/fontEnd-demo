@@ -8,7 +8,7 @@
         #htmlTest {
             display: flex;
             font-size: 30px;
-            font-family: 宋体, AdditionalSymbol;
+            font-family: 宋体;
         }
     </style>
 </head>
@@ -21,12 +21,9 @@
 
 <script>
     var context = document.querySelector('#canvas').getContext('2d');
-    context.font = '30px 宋体, AdditionalSymbol';
-    let unicode = "\\u0278"
+    context.font = '30px 宋体';
+    let unicode = "\\u2082"
     let text1 = eval('"' + unicode + '"')
-    let text2 = '测试字体'
     context.fillText(text1, 10, 50);
     document.querySelector('#text1').innerHTML = text1
-    context.fillText(text2, 100, 50)
-    document.querySelector('#text2').innerHTML = text2
 </script>

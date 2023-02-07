@@ -1,4 +1,4 @@
-<canvas id="c"></canvas>
+<canvas id="canvas"></canvas>
 
 <script id="vertex-shader-2d" type="notjs">
     // 一个属性变量，将会从缓冲中获取数据
@@ -20,7 +20,7 @@
 </script>
 
 <script>
-    var canvas = document.querySelector("#c");
+    var canvas = document.querySelector("#canvas");
     var gl = canvas.getContext("webgl");
     if (gl) {
         var vertexShaderSource = document.querySelector("#vertex-shader-2d").text;
@@ -31,22 +31,57 @@
         var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
         var program = createProgram(gl, vertexShader, fragmentShader);
 
-        //为GLSL着色程序提供数据
+        //获取顶点着色器需要的属性变量目前在的位置
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
         //创建一个缓冲
         var positionBuffer = gl.createBuffer();
 
-        //绑定位置信息缓冲
+        //把缓冲绑定到webgl内部的全局变量ARRAY_BUFFER, ARRAY_BUFFER也称为绑定点
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        //通过绑定点向缓冲中存放数据:三个二维点坐标
+        //创建Float32Array类型数据,并复制其到ARRAY_BUFFER,即positionBuffer缓冲中
         var positions = [
             0, 0,
             0, 0.5,
             0.7, 0,
         ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);//gl.STATIC_DRAW提示WebGL我们不会经常改变这些数据。
+
+        //重置
+        resizeCanvasToDisplaySize(gl)
+
+        //裁剪空间映射到屏幕
+        //裁剪空间的 -1 -> +1 分别对应到x轴的 0 -> gl.canvas.width 和y轴的 0 -> gl.canvas.height
+        gl.viewport(0, 0, gl.canvas.width, gl.height)
+
+        // 清空画布
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // 告诉它用我们之前写好的着色程序（一个着色器对）
+        gl.useProgram(program);
+
+        //启用对应属性
+        gl.enableVertexAttribArray(positionAttributeLocation);
+
+        // 将绑定点绑定到缓冲数据（positionBuffer）
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+        // 告诉属性怎么从positionBuffer中读取数据 (ARRAY_BUFFER)
+        var size = 2;          // 每次迭代运行提取两个单位数据
+        var type = gl.FLOAT;   // 每个单位的数据类型是32位浮点型
+        var normalize = false; // 不需要归一化数据
+        var stride = 0;        // 0 = 移动单位数量 * 每个单位占用内存（sizeof(type)）
+
+        // 每次迭代运行运动多少内存到下一个数据开始点
+        var offset = 0;        // 从缓冲起始位置开始读取
+        gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset)
+
+        var primitiveType = gl.TRIANGLES;
+        var offset = 0;
+        var count = 3;
+        gl.drawArrays(primitiveType, offset, count);
     }
 
     // 创建着色器方法，输入参数：渲染上下文，着色器类型，数据源
@@ -73,5 +108,21 @@
         }
         console.log(gl.getProgramInfoLog(program));
         gl.deleteProgram(program);
+    }
+
+    function resizeCanvasToDisplaySize(gl) {
+        var realToCSSPixels = window.devicePixelRatio;
+
+        // 获取浏览器显示的画布的CSS像素值
+        // 然后计算出设备像素设置drawingbuffer
+        var displayWidth = Math.floor(gl.canvas.clientWidth * realToCSSPixels);
+        var displayHeight = Math.floor(gl.canvas.clientHeight * realToCSSPixels);
+
+        // 检查画布尺寸是否相同
+        if (gl.canvas.width !== displayWidth || gl.canvas.height !== displayHeight) {
+            // 设置为相同的尺寸
+            gl.canvas.width = displayWidth;
+            gl.canvas.height = displayHeight;
+        }
     }
 </script>
